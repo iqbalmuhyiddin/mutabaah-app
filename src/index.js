@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import App from "containers/App";
 import * as serviceWorker from "./serviceWorker";
 import "styles/bootstrap.min.css";
+import "antd/dist/antd.css";
 
 ReactDOM.render(<App />, document.getElementById("root"));
 
