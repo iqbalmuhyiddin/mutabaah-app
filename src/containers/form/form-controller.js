@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { AuthContext } from "context";
-import { firebase } from "config";
+import { db } from "config";
 import { openNotification } from "utils";
 import moment from "moment";
 import View from "./form-view";
@@ -11,7 +11,6 @@ const emptyState = {
 };
 
 const Controller = () => {
-  const db = firebase.firestore();
   const userCtx = React.useContext(AuthContext);
 
   const [data, setData] = React.useState(emptyState);
@@ -49,7 +48,7 @@ const Controller = () => {
       setLoading(false);
     };
     _loadActivites();
-  }, [db]);
+  }, []);
 
   useEffect(() => {
     const _loadUserActivity = async () => {
@@ -64,7 +63,7 @@ const Controller = () => {
       setLoading(false);
     };
     _loadUserActivity();
-  }, [db, userCtx, data.date]);
+  }, [userCtx, data.date]);
 
   return (
     <View

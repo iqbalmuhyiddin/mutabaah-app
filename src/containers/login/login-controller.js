@@ -1,13 +1,12 @@
 import React from "react";
 import { AuthContext } from "context";
-import { firebase } from "config";
+import { db } from "config";
 
 import moment from "moment";
 import View from "./login-view";
 import { useHistory } from "react-router-dom";
 
 const Controller = () => {
-  const db = firebase.firestore();
   const authCtx = React.useContext(AuthContext);
 
   const history = useHistory();

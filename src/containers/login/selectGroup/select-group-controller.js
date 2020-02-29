@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import View from "./select-group-view";
-import { firebase } from "config";
+import { db } from "config";
 
 const Handler = ({ onSuccess, email, isOpen }) => {
-  const db = firebase.firestore();
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [isLoading, setLoading] = useState(false);
@@ -36,7 +35,7 @@ const Handler = ({ onSuccess, email, isOpen }) => {
       setLoading(false);
     };
     _loadGroup();
-  }, [db]);
+  }, []);
 
   return (
     <View
