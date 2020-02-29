@@ -1,5 +1,5 @@
 import React from "react";
-import { Checkbox, DatePicker, InputNumber, Spin, Switch, Button } from "antd";
+import { DatePicker, InputNumber, Spin, Switch, Button } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { Label, Text } from "components";
 import moment from "moment";
@@ -51,7 +51,6 @@ const View = ({
               value={data.activities[activity.id]}
               name={activity.id}
               onChange={onChange}
-              description={activity.description}
             />
           </div>
         ))}
@@ -71,7 +70,7 @@ const View = ({
 
 export default View;
 
-const RenderInput = ({ type, name, value, onChange, description }) => {
+const RenderInput = ({ type, name, value, onChange }) => {
   if (type === INPUT_TYPE.BOOLEAN) {
     return (
       <Switch
