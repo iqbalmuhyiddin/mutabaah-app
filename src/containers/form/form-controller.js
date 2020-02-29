@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { AuthContext } from "context";
 import { firebase } from "config";
+import { openNotification } from "utils";
 import moment from "moment";
 import View from "./form-view";
 
@@ -37,6 +38,7 @@ const Controller = () => {
       .doc(data.date)
       .set(data.activities);
     setSaving(false);
+    openNotification("success", "Alhamdulillah", "Data berhasil disimpan");
   };
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import React from "react";
 import { GoogleLogin } from "react-google-login";
 import { Spin } from "antd";
 import { useHistory } from "react-router-dom";
+import { openNotification } from "utils";
 
 import FormSelectGroup from "./selectGroup";
 
@@ -26,6 +27,11 @@ const View = ({ isLoading, onOk, user, login }) => {
 
   const _onFailure = response => {
     console.log(response);
+    openNotification(
+      "error",
+      "Astagfirullah",
+      "Terjadi kesalahan. Silahkan ulangi."
+    );
   };
   return (
     <>
