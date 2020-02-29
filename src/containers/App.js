@@ -1,15 +1,17 @@
 import React from "react";
 import { AuthContext } from "context";
 import { Layout } from "antd";
-import { Logo, PrivateRoute } from "components";
-import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
+import { Logo, PrivateRoute, Profile } from "components";
+import { Route, Switch, useLocation } from "react-router-dom";
 import { routes } from "config";
 import { useCookies } from "react-cookie";
+import "moment/locale/id";
 
 const { Header, Content } = Layout;
 
 const App = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["userData"]);
+  const location = useLocation();
 
   const _setToken = (value, expires) => {
     setCookie("userData", value, { expires, path: "/" });
@@ -28,7 +30,8 @@ const App = () => {
   const contextValue = {
     setToken: _setToken,
     removeToken: _removeToken,
-    userData: cookies.userData,
+    profile: cookies.userData ? cookies.userData.profile : null,
+    token: cookies.userData ? cookies.userData.token : null,
     isLogin: _isLogin
   };
   return (
@@ -42,29 +45,33 @@ const App = () => {
             style={{ height: "calc(100vh - 64px)" }}
             className="overflow-auto"
           >
-            <div className="container h-100">
-              <Router>
-                <Switch>
-                  {routes.map(route => {
-                    if (route.isPublic) {
-                      return (
-                        <Route
-                          path={route.path}
-                          component={route.component}
-                          key={route.path}
-                        />
-                      );
-                    }
+            <div className="container h-100 pt-5">
+              {_isLogin() && location.pathname !== "/auth/login" && (
+                <ProfileWrapper
+                  user={cookies.userData.profile || {}}
+                  handleLogout={_removeToken}
+                />
+              )}
+              <Switch>
+                {routes.map(route => {
+                  if (route.isPublic) {
                     return (
-                      <PrivateRoute
+                      <Route
                         path={route.path}
                         component={route.component}
                         key={route.path}
                       />
                     );
-                  })}
-                </Switch>
-              </Router>
+                  }
+                  return (
+                    <PrivateRoute
+                      path={route.path}
+                      component={route.component}
+                      key={route.path}
+                    />
+                  );
+                })}
+              </Switch>
             </div>
           </Content>
         </Layout>
@@ -74,3 +81,16 @@ const App = () => {
 };
 
 export default App;
+
+const ProfileWrapper = ({ user, handleLogout }) => (
+  <div className="row d-flex justify-content-center">
+    <div className="col-12 col-lg-4">
+      <Profile
+        name={user.name}
+        email={user.email}
+        avatar={user.imageUrl}
+        onLogout={handleLogout}
+      />
+    </div>
+  </div>
+);
