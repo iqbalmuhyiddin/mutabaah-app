@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import View from "./select-group-view";
 import { firebase } from "config";
 
-const Handler = ({ onSuccess, email }) => {
+const Handler = ({ onSuccess, email, isOpen }) => {
   const db = firebase.firestore();
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -20,25 +20,23 @@ const Handler = ({ onSuccess, email }) => {
       .doc(email)
       .update({ groupId: selectedGroup, groupName: group.name });
 
-    onSuccess();
+    return onSuccess();
   };
 
   const _changeGroup = id => {
     setSelectedGroup(id);
   };
 
-  const _loadGroup = async () => {
-    setLoading(true);
-    const rsp = await db.collection("groups").get();
-
-    setGroups(rsp.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-    setLoading(false);
-  };
-
   useEffect(() => {
+    const _loadGroup = async () => {
+      setLoading(true);
+      const rsp = await db.collection("groups").get();
+
+      setGroups(rsp.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+      setLoading(false);
+    };
     _loadGroup();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [db]);
 
   return (
     <View
@@ -46,6 +44,7 @@ const Handler = ({ onSuccess, email }) => {
       onOk={_onSubmit}
       groups={groups}
       changeGroup={_changeGroup}
+      isOpen={isOpen}
     />
   );
 };

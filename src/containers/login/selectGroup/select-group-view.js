@@ -3,7 +3,7 @@ import { Button, Modal, Select, Spin } from "antd";
 
 const { Option } = Select;
 
-const Form = ({ onOk, isLoading, groups, changeGroup }) => {
+const Form = ({ onOk, isLoading, groups, changeGroup, isOpen }) => {
   const _handleSubmit = e => {
     e.preventDefault();
     if (isLoading) {
@@ -15,7 +15,7 @@ const Form = ({ onOk, isLoading, groups, changeGroup }) => {
   return (
     <Modal
       title={"Pilih Group"}
-      visible
+      visible={isOpen}
       maskClosable={false}
       onOk={onOk}
       footer={null}

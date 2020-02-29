@@ -1,24 +1,26 @@
 import React from "react";
 import { GoogleLogin } from "react-google-login";
 import { Spin } from "antd";
+import { useHistory } from "react-router-dom";
 
 import FormSelectGroup from "./selectGroup";
 
 const View = ({ isLoading, onOk, user, login }) => {
   const [isSelectGroup, setSelectGroup] = React.useState(false);
+  const history = useHistory();
 
   const _onSuccess = {
     google: async res => {
+      login(res);
       const userData = await onOk(res);
       if (!userData.data().groupId) {
-        setSelectGroup(true);
-        return;
+        return setSelectGroup(true);
       }
-      login();
+      return history.push("/");
     },
     group: () => {
       setSelectGroup(false);
-      login();
+      return history.push("/");
     }
   };
 
@@ -27,9 +29,12 @@ const View = ({ isLoading, onOk, user, login }) => {
   };
   return (
     <>
-      {isSelectGroup && (
-        <FormSelectGroup onSuccess={_onSuccess.group} email={user.email} />
-      )}
+      <FormSelectGroup
+        onSuccess={_onSuccess.group}
+        email={user.email}
+        isOpen={isSelectGroup}
+      />
+
       <div className="h-100 d-flex justify-content-center align-items-center ">
         {isLoading && <Spin />}
         {!isLoading && (

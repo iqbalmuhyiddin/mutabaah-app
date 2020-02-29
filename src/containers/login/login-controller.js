@@ -4,20 +4,21 @@ import { firebase } from "config";
 
 import moment from "moment";
 import View from "./login-view";
+import { useHistory } from "react-router-dom";
 
 const Controller = () => {
   const db = firebase.firestore();
   const authCtx = React.useContext(AuthContext);
 
+  const history = useHistory();
   const [isLoading, setLoading] = React.useState(false);
   const [user, setUser] = React.useState({ email: "" });
-  const [token, setToken] = React.useState(null);
 
-  const _checkUser = async profile => {
+  const _getUser = async email => {
     setLoading(true);
     const user = await db
       .collection("users")
-      .doc(profile.email)
+      .doc(email)
       .get();
     setLoading(false);
 
@@ -26,20 +27,18 @@ const Controller = () => {
 
   const _storeUser = async user => {
     setLoading(true);
-    const newUser = await db
-      .collection("users")
+    db.collection("users")
       .doc(user.email)
       .set({ ...user, groupId: null, groupName: null });
     setLoading(false);
 
-    return newUser;
+    return _getUser(user.email);
   };
 
   const _onSuccessOauth = async res => {
     setUser(res.profileObj);
 
-    setToken(res.accessToken);
-    const user = await _checkUser(res.profileObj);
+    const user = await _getUser(res.profileObj.email);
 
     if (user.exists) return user;
 
@@ -47,18 +46,25 @@ const Controller = () => {
     return newUser;
   };
 
-  const _login = () => {
+  const _login = res => {
     const userData = {
-      token: token,
-      profile: user
+      token: res.accessToken,
+      profile: res.profileObj
     };
 
     const expireDate = moment()
       .add(7, "days")
       .toDate();
 
-    authCtx.setToken(userData, expireDate);
+    return authCtx.setToken(userData, expireDate);
   };
+
+  React.useEffect(() => {
+    if (authCtx.isLogin()) {
+      history.push("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <View
